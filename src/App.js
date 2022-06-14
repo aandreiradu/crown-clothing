@@ -1,43 +1,25 @@
+
+import Directory from "./components/Directory/Directory";
+import Home from "./routes/home/home.component";
+import { Route,Routes } from "react-router-dom";
+import Navigation from "./routes/navigation/navigation.component";
+import Authentication from "./routes/sign-in/authentication.component";
+import Shop from "./routes/shop/shop";
+import Checkout from "./routes/checkout/Checkout";
+
 const App = () => {
-  return (
-    <div className='categories-container'>
-      <div className='category-container'>
-        {/* <img /> */}
-        <div className='category-body-container'>
-          <h2>Hats</h2>
-          <p>Shop Now</p>
-        </div>
-      </div>
-      <div className='category-container'>
-        {/* <img /> */}
-        <div className='category-body-container'>
-          <h2>Jackets</h2>
-          <p>Shop Now</p>
-        </div>
-      </div>
-      <div className='category-container'>
-        {/* <img /> */}
-        <div className='category-body-container'>
-          <h2>Sneakers</h2>
-          <p>Shop Now</p>
-        </div>
-      </div>
-      <div className='category-container'>
-        {/* <img /> */}
-        <div className='category-body-container'>
-          <h2>Womens</h2>
-          <p>Shop Now</p>
-        </div>
-      </div>
-      <div className='category-container'>
-        {/* <img /> */}
-        <div className='category-body-container'>
-          <h2>Mens</h2>
-          <p>Shop Now</p>
-        </div>
-      </div>
-    </div>
-  );
+
+return (
+  <Routes>
+    <Route path="/" element={<Navigation />}>
+      <Route index element={<Directory/>} />
+      <Route path="home" element={<Home />}></Route>
+      <Route path="auth" element={<Authentication />}></Route>
+      <Route path='shop/*' element={<Shop/>}></Route>
+      <Route path='/checkout' element={<Checkout/>}></Route>
+    </Route>
+  </Routes>
+);
 };
 
 export default App;

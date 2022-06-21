@@ -2,11 +2,13 @@ import React, { useState, useContext } from "react";
 import "./SignIn.scss";
 import Button,{BUTTON_TYPES_CLASSES} from "../button/button.component";
 import FormInput from "../form-input/form-input.component";
-import {
-  signInWithGooglePopup,
-  createUserDocumentAuth,
-  signInAuthWithEmailAndPassword,
-} from "../../utils/firebase/firebase.utils";
+// import {
+//   signInWithGooglePopup,
+//   createUserDocumentAuth,
+//   signInAuthWithEmailAndPassword,
+// } from "../../utils/firebase/firebase.utils";
+import { useDispatch } from "react-redux";
+import { googleSignInStart,emailSignInStart } from "../../store/user/user.action";
 
 
 const defaultFormFields = {
@@ -15,7 +17,7 @@ const defaultFormFields = {
 };
 
 const SignInForm = () => {
-
+  const dispatch = useDispatch();
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { password, email } = formFields;
 
@@ -31,11 +33,13 @@ const SignInForm = () => {
 
   // sign in with google
   const signInWithGoogle = async () => {
-    const { user } = await signInWithGooglePopup();
-    console.log("response", user);
 
-    // moved to auth context;
-    // const userDocRef = await createUserDocumentAuth(user);
+    // without saga
+    // const { user } = await signInWithGooglePopup();
+    // console.log("response", user);
+
+    // with saga
+    dispatch(googleSignInStart());
   };
 
   const resetFormFields = () => setFormFields(defaultFormFields);
@@ -47,8 +51,12 @@ const SignInForm = () => {
 
     try {
       
-      const {user} = await signInAuthWithEmailAndPassword(email, password);
+      // without saga
+      // const {user} = await signInAuthWithEmailAndPassword(email, password);
 
+      // with saga
+      dispatch(emailSignInStart(email,password));
+      resetFormFields();
     } catch (err) {
       console.log(err);
       console.log(err.message);

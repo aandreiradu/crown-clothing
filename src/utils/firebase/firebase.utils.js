@@ -60,17 +60,37 @@ export const getCategoriesAndDocuments = async () => {
     const querySnapshot = await getDocs(q);
 
 
-    const categoryMap = querySnapshot.docs.reduce((acc,docSnapshot) => {
-          const {title,items} = docSnapshot.data();
-          acc[title.toLowerCase()] = items;
-          return acc;
-    },{});
+    /*
+      generate categorymap => 
+          {
+            'hats' : 
+              [{"name": "Brown Brim","imageUrl": "https://i.ibb.co/ZYW3VTp/brown-brim.png","price": 25,"id": 1} , ...etc],
+            
+            'jackets' : 
+              [{"price": 125,"id": 18,"imageUrl": "https://i.ibb.co/XzcwL5s/black-shearling.png","name": "Black Jean Shearling"}],
 
-    return categoryMap;
+            'sneakers' : 
+            [{"price": 220,"id": 10,"imageUrl": "https://i.ibb.co/0s3pdnc/adidas-nmd.png","name": "Adidas NMD}],
+
+            ...etc
+          } 
+    
+    */
+          // moved to category.selector.js
+    // const categoryMap = querySnapshot.docs.reduce((acc,docSnapshot) => {
+    //       const {title,items} = docSnapshot.data();
+    //       acc[title.toLowerCase()] = items;
+    //       return acc;
+    // },{});
+
+    // return categoryMap;
+    
+    // modified because we need to create multiple selectors for categories
+    return querySnapshot.docs.map(docSnapshot => docSnapshot.data());
 }
 
 export const createUserDocumentAuth = async (userAuthData,additionalInformation={}) => {
-  console.log('createUserDocumentAuth received',userAuthData,additionalInformation);
+  // console.log('createUserDocumentAuth received',userAuthData,additionalInformation);
   
     if (!userAuthData) {
     return;
@@ -96,8 +116,11 @@ export const createUserDocumentAuth = async (userAuthData,additionalInformation=
       console.log("error creating the user", err.message);
     }
   }
+  // without saga
+  // return userDocRef;
 
-  return userDocRef;
+  // with saga
+  return userSnapshot;
 };
 
 // create user with email and password (dont need provider)
@@ -122,3 +145,17 @@ export const signInAuthWithEmailAndPassword = async(email,password) => {
 export const signOutUser = async () => await signOut(auth);
 
 export const onAuthStateChangedListener = async (callback) => onAuthStateChanged(auth,callback);
+
+
+export const getCurrentUser = () => {
+  return new Promise((resolve,reject) => {
+      const unsubscribe = onAuthStateChanged(
+        auth,
+        (userAuth) => {
+          unsubscribe();
+          resolve(userAuth)
+        },
+        reject
+      );
+  });
+}
